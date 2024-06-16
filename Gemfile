@@ -4,5 +4,6 @@ source "https://rubygems.org"
 
 # gem "rails"
 
-gem "exec", "~> 0.0.3"
 gem "rubocop", "~> 1.64"
+
+gem "colorize", "~> 1.1"
