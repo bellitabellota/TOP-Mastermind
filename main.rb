@@ -17,11 +17,14 @@ class Game
     self.secret_code = players[1].choose_random_secret_code
     visualize_board
 
-    self.all_guesses[turn] = players[0].make_guess
-    # puts "secret code:"
-    # p self.secret_code
-    evaluate_guess
+    12.times do
+      play_one_round
+    end
+  end
 
+  def play_one_round
+    self.all_guesses[turn] = players[0].make_guess
+    evaluate_guess
     visualize_board
     self.turn += 1
   end
@@ -29,16 +32,18 @@ class Game
   def evaluate_guess
     self.secret_code.each_with_index do |secret_color, secret_position|
       all_guesses[self.turn].each_with_index do |color_guessed, guessed_position|
-        if color_guessed == secret_color && guessed_position == secret_position
-          self.evaluated_guesses[self.turn][guessed_position] = "+"
-          next
-        elsif color_guessed == secret_color && !guessed_position == secret_position
-          self.evaluated_guesses[self.turn][guessed_position] = "~"
+        if self.evaluated_guesses[self.turn][guessed_position] != "+"
+          if color_guessed == secret_color && guessed_position == secret_position
+            self.evaluated_guesses[self.turn][guessed_position] = "+"
+            next
+          elsif color_guessed == secret_color && guessed_position != secret_position
+            self.evaluated_guesses[self.turn][guessed_position] = "~"
+          end
         end
       end
     end
+    self.evaluated_guesses
   end
-
 
   def visualize_board
     line_number = 12
@@ -55,14 +60,14 @@ class Game
   end
 
   def display_guess_and_evaluation(line_number)
-    puts "  #{self.evaluated_guesses[turn][0]} | #{
-      self.evaluated_guesses[turn][1]} || #{
-      ' '.colorize(background: self.all_guesses[turn][0].to_sym)} | #{
-      ' '.colorize(background: self.all_guesses[turn][1].to_sym)} | #{
-      ' '.colorize(background: self.all_guesses[turn][2].to_sym)} | #{
-      ' '.colorize(background: self.all_guesses[turn][3].to_sym)} || #{
-      self.evaluated_guesses[turn][2]} | #{
-      self.evaluated_guesses[turn][3]} Turn #{line_number}"
+    puts "  #{self.evaluated_guesses[line_number - 1][0]} | #{
+      self.evaluated_guesses[line_number - 1][1]} || #{
+      ' '.colorize(background: self.all_guesses[line_number - 1][0].to_sym)} | #{
+      ' '.colorize(background: self.all_guesses[line_number - 1][1].to_sym)} | #{
+      ' '.colorize(background: self.all_guesses[line_number - 1][2].to_sym)} | #{
+      ' '.colorize(background: self.all_guesses[line_number - 1][3].to_sym)} || #{
+      self.evaluated_guesses[line_number - 1][2]} | #{
+      self.evaluated_guesses[line_number - 1][3]} Turn #{line_number}"
   end
 
   def display_colors_of_pins
@@ -110,12 +115,9 @@ end
 
 class ComputerPlayer < Player
   def choose_random_secret_code
-    p game.secret_code.map { |position| position = game.colors.sample }
-
+    game.secret_code.map { |position| position = game.colors.sample }
   end
 end
 
 game = Game.new(HumanPlayer, ComputerPlayer)
 game.play
-# print game.secret_code
-# puts "evaluated_guesses: #{game.evaluated_guesses}"
