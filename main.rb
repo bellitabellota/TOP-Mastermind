@@ -37,19 +37,27 @@ class Game
   end
 
   def evaluate_guess
-    secret_code.each_with_index do |secret_color, secret_position|
-      all_guesses[self.turn].each_with_index do |color_guessed, guessed_position|
-        if evaluated_guesses[self.turn][guessed_position] != "+"
-          if color_guessed == secret_color && guessed_position == secret_position
-            evaluated_guesses[self.turn][guessed_position] = "+"
-            next
-          elsif color_guessed == secret_color && guessed_position != secret_position
-            evaluated_guesses[self.turn][guessed_position] = "~"
-          end
+    check_for_full_match
+    check_for_fuzzy_match
+    evaluated_guesses
+  end
+
+  def check_for_full_match
+    all_guesses[self.turn].each_with_index do |color_guessed, guessed_position|
+      evaluated_guesses[self.turn][guessed_position] = "+" if color_guessed == secret_code[guessed_position]
+    end
+  end
+
+  def check_for_fuzzy_match
+    all_guesses[self.turn].each_with_index do |color_guessed, guessed_position|
+      next unless evaluated_guesses[self.turn][guessed_position] != "+"
+
+      secret_code.each_with_index do |secret_color, secret_position|
+        if color_guessed == secret_color && evaluated_guesses[self.turn][secret_position] != "+"
+          evaluated_guesses[self.turn][guessed_position] = "~"
         end
       end
     end
-    evaluated_guesses
   end
 
   def visualize_board
@@ -123,7 +131,7 @@ end
 
 class ComputerPlayer < Player
   def choose_random_secret_code
-    game.secret_code.map { |position| position = game.colors.sample }
+    game.secret_code.map { game.colors.sample }
   end
 end
 
