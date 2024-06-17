@@ -19,7 +19,14 @@ class Game
 
     12.times do
       play_one_round
+      return puts "You win, you guessed the code!!!" if check_for_win
     end
+
+    puts "You loose. The secret code was #{self.secret_code}"
+  end
+
+  def check_for_win
+    self.evaluated_guesses[self.turn - 1].all? { |guess| guess == "+" }
   end
 
   def play_one_round
@@ -93,6 +100,7 @@ end
 class HumanPlayer < Player
   def make_guess
     game.display_colors_of_pins
+    puts
     guess = Array.new(4)
     get_and_validate(guess)
     guess
