@@ -22,41 +22,41 @@ class Game
       return puts "You win, you guessed the code!!!" if check_for_win
     end
 
-    puts "You loose. The secret code was #{self.secret_code}"
+    puts "You loose. The secret code was #{secret_code}"
   end
 
   def check_for_win
-    self.evaluated_guesses[self.turn - 1].all? { |guess| guess == "+" }
+    evaluated_guesses[turn - 1].all? { |guess| guess == "+" }
   end
 
   def play_one_round
-    self.all_guesses[turn] = players[0].make_guess
+    all_guesses[turn] = players[0].make_guess
     evaluate_guess
     visualize_board
     self.turn += 1
   end
 
   def evaluate_guess
-    self.secret_code.each_with_index do |secret_color, secret_position|
+    secret_code.each_with_index do |secret_color, secret_position|
       all_guesses[self.turn].each_with_index do |color_guessed, guessed_position|
-        if self.evaluated_guesses[self.turn][guessed_position] != "+"
+        if evaluated_guesses[self.turn][guessed_position] != "+"
           if color_guessed == secret_color && guessed_position == secret_position
-            self.evaluated_guesses[self.turn][guessed_position] = "+"
+            evaluated_guesses[self.turn][guessed_position] = "+"
             next
           elsif color_guessed == secret_color && guessed_position != secret_position
-            self.evaluated_guesses[self.turn][guessed_position] = "~"
+            evaluated_guesses[self.turn][guessed_position] = "~"
           end
         end
       end
     end
-    self.evaluated_guesses
+    evaluated_guesses
   end
 
   def visualize_board
     line_number = 12
 
     while line_number > 0
-      if self.all_guesses[line_number - 1].all? { |color| color != " " }
+      if all_guesses[line_number - 1].all? { |color| color != " " }
         display_guess_and_evaluation(line_number)
       else
         puts "    |   ||   |   |   |   ||   |   Turn #{line_number}"
@@ -67,24 +67,24 @@ class Game
   end
 
   def display_guess_and_evaluation(line_number)
-    puts "  #{self.evaluated_guesses[line_number - 1][0]} | #{
-      self.evaluated_guesses[line_number - 1][1]} || #{
-      ' '.colorize(background: self.all_guesses[line_number - 1][0].to_sym)} | #{
-      ' '.colorize(background: self.all_guesses[line_number - 1][1].to_sym)} | #{
-      ' '.colorize(background: self.all_guesses[line_number - 1][2].to_sym)} | #{
-      ' '.colorize(background: self.all_guesses[line_number - 1][3].to_sym)} || #{
-      self.evaluated_guesses[line_number - 1][2]} | #{
-      self.evaluated_guesses[line_number - 1][3]} Turn #{line_number}"
+    puts "  #{evaluated_guesses[line_number - 1][0]} | #{
+      evaluated_guesses[line_number - 1][1]} || #{
+      ' '.colorize(background: all_guesses[line_number - 1][0].to_sym)} | #{
+      ' '.colorize(background: all_guesses[line_number - 1][1].to_sym)} | #{
+      ' '.colorize(background: all_guesses[line_number - 1][2].to_sym)} | #{
+      ' '.colorize(background: all_guesses[line_number - 1][3].to_sym)} || #{
+      evaluated_guesses[line_number - 1][2]} | #{
+      evaluated_guesses[line_number - 1][3]} Turn #{line_number}"
   end
 
   def display_colors_of_pins
     puts "The pin colors are: #{
-      self.colors[0]}, #{
-      self.colors[1]}, #{
-      self.colors[2]}, #{
-      self.colors[3]}, #{
-      self.colors[4]} and #{
-      self.colors[5]}."
+      colors[0]}, #{
+      colors[1]}, #{
+      colors[2]}, #{
+      colors[3]}, #{
+      colors[4]} and #{
+      colors[5]}."
   end
 end
 
