@@ -62,10 +62,14 @@ class Game
     all_guesses[self.turn].each_with_index do |color_guessed, guessed_position|
       next unless evaluated_guesses[self.turn][guessed_position] != "+"
 
-      secret_code.each_with_index do |secret_color, secret_position|
-        if color_guessed == secret_color && evaluated_guesses[self.turn][secret_position] != "+"
-          evaluated_guesses[self.turn][guessed_position] = "~"
-        end
+      check_if_not_fully_matching_color_is_fuzzy_match(color_guessed, guessed_position)
+    end
+  end
+
+  def check_if_not_fully_matching_color_is_fuzzy_match(color_guessed, guessed_position)
+    secret_code.each_with_index do |secret_color, secret_position|
+      if color_guessed == secret_color && evaluated_guesses[self.turn][secret_position] != "+"
+        evaluated_guesses[self.turn][guessed_position] = "~"
       end
     end
   end
@@ -153,13 +157,13 @@ class HumanPlayer < Player
     loop do
       puts "Please enter your color choice for Position #{index + 1}:"
       game.secret_code[index] = gets.chomp
-      break game.secret_code[index] if game.colors.game_colors_includes_color_choice
+      break game.secret_code[index] if game_colors_includes_color_choice?(index)
 
       puts "Invalid choice. Please try again."
     end
   end
 
-  def game_colors_includes_color_choice?
+  def game_colors_includes_color_choice?(index)
     game.colors.include?(game.secret_code[index])
   end
 
