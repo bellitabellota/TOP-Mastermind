@@ -153,10 +153,14 @@ class HumanPlayer < Player
     loop do
       puts "Please enter your color choice for Position #{index + 1}:"
       game.secret_code[index] = gets.chomp
-      break game.secret_code[index] if game.colors.include?(game.secret_code[index])
+      break game.secret_code[index] if game.colors.game_colors_includes_color_choice
 
       puts "Invalid choice. Please try again."
     end
+  end
+
+  def game_colors_includes_color_choice?
+    game.colors.include?(game.secret_code[index])
   end
 
   def get_guess(guess)
