@@ -8,29 +8,39 @@ class Game
     @colors = ["yellow", "blue", "magenta", "red", "green", "cyan"]
     @secret_code = Array.new(4)
     @turn = 0
-    @players = [player1.new(self, 1), player2.new(self, 2)] # self here is referencing the game object
+    @players = [player1.new(self, "You"), player2.new(self, "Computer")] # self here is referencing the game object
     @all_guesses = Array.new(12) { Array.new(4, " ") }
     @evaluated_guesses = Array.new(12) { Array.new(4, " ") }
   end
 
-  def play
-    self.secret_code = players[1].choose_random_secret_code
+  def start_game
+    role_human = HumanPlayer.request_preferred_role
+
+    if role_human == "g"
+      play(players[0], players[1])
+    else
+      play(players[1], players[0])
+    end
+  end
+
+  def play(guesser, code_creator)
+    self.secret_code = code_creator.choose_secret_code
     visualize_board
 
     12.times do
-      play_one_round
-      return puts "You win, you guessed the code!!!" if check_for_win
+      play_one_round(guesser)
+      return puts "#{guesser.form_of_address} guessed the code!!! #{guesser.form_of_address} won." if check_for_win
     end
 
-    puts "You loose. The secret code was #{secret_code}"
+    puts "#{guesser.form_of_address} lost. The secret code was #{secret_code}"
   end
 
   def check_for_win
     evaluated_guesses[turn - 1].all? { |guess| guess == "+" }
   end
 
-  def play_one_round
-    all_guesses[turn] = players[0].make_guess
+  def play_one_round(guesser)
+    all_guesses[turn] = guesser.make_guess
     evaluate_guess
     visualize_board
     self.turn += 1
@@ -99,22 +109,57 @@ end
 class Player
   attr_reader :game
 
-  def initialize(game, player_id)
+  def initialize(game, form_of_address)
+    @form_of_address = form_of_address
     @game = game
-    @player_id = player_id
   end
-end
 
-class HumanPlayer < Player
   def make_guess
     game.display_colors_of_pins
     puts
     guess = Array.new(4)
-    get_and_validate(guess)
+    get_guess(guess)
     guess
   end
+end
 
-  def get_and_validate(guess)
+class HumanPlayer < Player
+  attr_reader :form_of_address
+
+  def self.request_preferred_role
+    loop do
+      puts "Do you want to create the secret code (C) or do you want to guess the code (G)?
+      Please enter the corresponding letter:"
+
+      human_role = gets.chomp.downcase
+      break human_role if ["c", "g"].include?(human_role)
+
+      puts "Invalid choice. Please try again."
+    end
+  end
+
+  def choose_secret_code
+    puts "You can choose from the following pin colors: #{game.colors}."
+
+    index = 0
+    while index < 4
+      choose_one_secret_color(index)
+      index += 1
+    end
+    game.secret_code
+  end
+
+  def choose_one_secret_color(index)
+    loop do
+      puts "Please enter your color choice for Position #{index + 1}:"
+      game.secret_code[index] = gets.chomp
+      break game.secret_code[index] if game.colors.include?(game.secret_code[index])
+
+      puts "Invalid choice. Please try again."
+    end
+  end
+
+  def get_guess(guess)
     index = 0
     while index < 4
       loop do
@@ -130,10 +175,25 @@ class HumanPlayer < Player
 end
 
 class ComputerPlayer < Player
-  def choose_random_secret_code
+  attr_reader :form_of_address
+
+  def choose_secret_code
     game.secret_code.map { game.colors.sample }
+  end
+
+  def get_guess(guess)
+    index = 0
+    while index < 4
+      loop do
+        puts "Please enter your guess for Position #{index + 1}:"
+        guess[index] = game.colors.sample
+        break guess[index] if game.colors.include?(guess[index])
+
+        puts "Invalid choice. Please try again."
+      end
+      index += 1
+    end
   end
 end
 
-game = Game.new(HumanPlayer, ComputerPlayer)
-game.play
+Game.new(HumanPlayer, ComputerPlayer).start_game
