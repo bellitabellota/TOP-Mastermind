@@ -200,17 +200,30 @@ class ComputerPlayer < Player
 
   def get_guess(guess)
     index = 0
-    while index < 4
-      loop do
-        puts "Please enter your guess for Position #{index + 1}:"
+    if game.turn == 0
+      while index < 4
         guess[index] = game.colors.sample
-        break guess[index] if game.colors.include?(guess[index])
-
-        puts "Invalid choice. Please try again."
+        index += 1
       end
+    else
+      keep_choice_if_previously_full_match(guess, index)
+    end
+  end
+
+  def keep_choice_if_previously_full_match(guess, index)
+    while index < 4
+      guess[index] = if previous_match?(index)
+                       game.all_guesses[game.turn - 1][index]
+                     else
+                       game.colors.sample
+                     end
       index += 1
     end
   end
+end
+
+def previous_match?(index)
+  game.evaluated_guesses[game.turn - 1][index] == "+"
 end
 
 Game.new(HumanPlayer, ComputerPlayer).start_game
