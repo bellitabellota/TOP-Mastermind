@@ -89,14 +89,23 @@ class Game
   end
 
   def display_guess_and_evaluation(line_number)
-    puts "  #{evaluated_guesses[line_number - 1][0]} | #{
-      evaluated_guesses[line_number - 1][1]} || #{
-      ' '.colorize(background: all_guesses[line_number - 1][0].to_sym)} | #{
-      ' '.colorize(background: all_guesses[line_number - 1][1].to_sym)} | #{
-      ' '.colorize(background: all_guesses[line_number - 1][2].to_sym)} | #{
-      ' '.colorize(background: all_guesses[line_number - 1][3].to_sym)} || #{
-      evaluated_guesses[line_number - 1][2]} | #{
-      evaluated_guesses[line_number - 1][3]} Turn #{line_number}"
+    puts "  #{
+      display_evaluated_guess(line_number, 0)} | #{
+        display_evaluated_guess(line_number, 1)} || #{
+        display_color_guess(line_number, 0)} | #{
+        display_color_guess(line_number, 1)} | #{
+        display_color_guess(line_number, 2)} | #{
+        display_color_guess(line_number, 3)} || #{
+          display_evaluated_guess(line_number, 2)} | #{
+            display_evaluated_guess(line_number, 3)} Turn #{line_number}"
+  end
+
+  def display_color_guess(line_number, guess_index)
+    " ".colorize(background: all_guesses[line_number - 1][guess_index].to_sym)
+  end
+
+  def display_evaluated_guess(line_number, guess_index)
+    evaluated_guesses[line_number - 1][guess_index]
   end
 
   def display_colors_of_pins
