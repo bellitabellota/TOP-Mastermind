@@ -15,3 +15,13 @@ Build a Mastermind game from the command line where you have 12 turns to guess t
 5. If you choose to modify the rules, you can provide the computer additional information about each guess. For example, you can start by having the computer guess randomly, but keep the ones that match exactly. You can add a little bit more intelligence to the computer player so that, if the computer has guessed the right color but the wrong position, its next guess will need to include that color somewhere.
 
 6. If you want to follow the rules of the game, you’ll need to research strategies for solving Mastermind, such as this [post](https://puzzling.stackexchange.com/questions/546/clever-ways-to-solve-mastermind).
+
+## Instructions to play the game
+
+A secret code of 4 colors (out of 6) will be chosen by the code creator. The guesser will try to guess the secret code by making entering their color choice.
+
+If color and guessed position match with the secret code it is a full match which will be confirmed with a `+` symbol.
+
+If the color appears in the secret code but the position does not match it is a fuzzy match which will be indicated by a `~` symbol.
+
+In case computer has to guess the secret code, it will remember if in the previous choice a full match was found and guess the same color at same position again. All other guesses are random.
