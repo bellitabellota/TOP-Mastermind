@@ -1,6 +1,6 @@
 Preview
 
-<img src="https://github.com/bellitabellota/TOP-Mastermind/blob/main/Mastermind.gif" />
+<img src="https://github.com/bellitabellota/TOP-Mastermind/blob/main/Mastermind%202.gif" />
 
 # Mastermind
 
