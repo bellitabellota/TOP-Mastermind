@@ -1,3 +1,7 @@
+Preview
+
+<img src="https://github.com/bellitabellota/TOP-Mastermind/blob/main/Mastermind.gif" />
+
 # Mastermind
 
 ## Assignment instructions from The Odin Project (TOP)
